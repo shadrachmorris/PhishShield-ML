@@ -1,2 +1,5 @@
 venv/
+data/*.csv
+data/*.zip
 __pycache__/
+*.pkl

@@ -41,5 +41,9 @@ def train_phish_shield():
     print("\nDetailed Security Report:")
     print(classification_report(y_test, predictions))
 
+    import joblib
+    joblib.dump(model, 'phish_model.pkl')
+    joblib.dump(scaler, 'scaler.pkl')
+    print("💾 Model and Scaler saved successfully!")
 if __name__ == "__main__":
     train_phish_shield()
