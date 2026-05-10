@@ -1,23 +1,45 @@
 import pandas as pd
-import os
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score, classification_report
 
-def load_data():
-    # Double check the path
+def train_phish_shield():
+    # --- PHASE 2 RECAP ---
     file_path = 'data/phishing_data.csv'
-    
-    if not os.path.exists(file_path):
-        print(f"❌ Error: File not found at {file_path}")
-        print("Check if you unzipped the file in the data folder!")
-        return
+    df = pd.read_csv(file_path)
 
-    try:
-        # Pulling the first 5 rows to check headers
-        df = pd.read_csv(file_path, nrows=5)
-        print("✅ Success! Dataset connected.")
-        print("\nColumn names found in this dataset:")
-        print(df.columns.tolist())
-    except Exception as e:
-        print(f"❌ Error reading the CSV: {e}")
-        
+    features = ['URLLength', 'DomainLength', 'IsDomainIP', 'NoOfSubDomain', 
+                'NoOfLettersInURL', 'NoOfDegitsInURL', 'NoOfEqualsInURL', 
+                'NoOfQMarkInURL', 'NoOfAmpersandInURL', 'IsHTTPS']
+    
+    X = df[features]
+    y = df['label']
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+    scaler = StandardScaler()
+    X_train_scaled = scaler.fit_transform(X_train)
+    X_test_scaled = scaler.transform(X_test)
+
+    # --- PHASE 3: TRAINING ---
+    print("Training the AI (Random Forest)... This may take a moment.")
+    
+    # Initialize the model
+    model = RandomForestClassifier(n_estimators=100, random_state=42)
+    
+    # Teach the model using the training data
+    model.fit(X_train_scaled, y_train)
+    
+    # --- EVALUATION ---
+    # Now quizzing the model on the 20% it hasn't seen yet
+    predictions = model.predict(X_test_scaled)
+    accuracy = accuracy_score(y_test, predictions)
+    
+    print(f"\n Phase 3 Complete!")
+    print(f"Model Accuracy: {accuracy * 100:.2f}%")
+    print("\nDetailed Security Report:")
+    print(classification_report(y_test, predictions))
+
 if __name__ == "__main__":
-    load_data()
+    train_phish_shield()
