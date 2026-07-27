@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PhishShield ML — Cyber Threat Detection Engine</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        cyber: {
+                            900: '#0b0f19',
+                            800: '#111827',
+                            700: '#1f2937',
+                            accent: '#06b6d4',
+                            accentHover: '#22d3ee'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="bg-cyber-900 text-gray-100 font-sans antialiased min-h-screen flex flex-col">
+
+    <!-- Navigation Header -->
+    <nav class="border-b border-gray-800 bg-cyber-800/80 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <span class="text-2xl">🛡️</span>
+                <span class="font-bold text-xl tracking-wider text-white">PHISH<span class="text-cyber-accent">SHIELD</span></span>
+            </div>
+            <div class="flex space-x-8 text-sm font-medium text-gray-300">
+                <a href="/" class="text-cyber-accent font-semibold">Scanner</a>
+                <a href="/docs" target="_blank" class="hover:text-cyber-accent transition">Interactive API Docs</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Body Container -->
+    <main class="flex-grow max-w-4xl mx-auto w-full px-4 py-12">
+        <div class="text-center mb-10">
+            <h1 class="text-4xl font-extrabold tracking-tight text-white sm:text-5xl mb-3">
+                AI-Powered Phishing Engine
+            </h1>
+            <p class="text-gray-400 text-lg">
+                Instantly evaluate suspicious links or upload email/message screenshots for OCR extraction.
+            </p>
+        </div>
+
+        <!-- Scanner Card -->
+        <div class="bg-cyber-800 border border-gray-800 rounded-2xl p-6 shadow-2xl">
+            <div class="flex space-x-4 mb-6 border-b border-gray-700 pb-4">
+                <button id="urlTabBtn" onclick="switchTab('url')" class="px-4 py-2 text-sm font-semibold rounded-lg bg-cyber-accent text-cyber-900 transition">
+                    🔗 URL Address Scanner
+                </button>
+                <button id="imgTabBtn" onclick="switchTab('img')" class="px-4 py-2 text-sm font-semibold rounded-lg text-gray-400 hover:text-white transition">
+                    🖼️ Screenshot OCR Scanner
+                </button>
+            </div>
+
+            <!-- URL Form -->
+            <form id="urlForm" onsubmit="handleUrlSubmit(event)" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Target Web Address</label>
+                    <input type="url" id="urlInput" required placeholder="https://suspicious-domain-verification.com/login" 
+                        class="w-full bg-cyber-900 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-cyber-accent transition">
+                </div>
+                <button type="submit" id="urlSubmitBtn" class="w-full bg-cyber-accent hover:bg-cyber-accentHover text-cyber-900 font-bold py-3 rounded-xl transition shadow-lg shadow-cyan-500/10">
+                    Run Threat Analysis
+                </button>
+            </form>
+
+            <!-- Image Form -->
+            <form id="imgForm" onsubmit="handleImgSubmit(event)" class="space-y-4 hidden">
+                <div class="border-2 border-dashed border-gray-700 hover:border-cyber-accent rounded-xl p-8 text-center cursor-pointer transition bg-cyber-900/50" onclick="document.getElementById('imgInput').click()">
+                    <span class="text-4xl mb-2 block">📁</span>
+                    <p class="text-sm text-gray-300 font-medium">Click to select or drop screenshot here</p>
+                    <p class="text-xs text-gray-500 mt-1">Supports PNG, JPG, or WEBP images</p>
+                    <input type="file" id="imgInput" accept="image/*" class="hidden" onchange="updateFileName(this)">
+                </div>
+                <p id="fileName" class="text-xs text-cyber-accent font-mono text-center"></p>
+                <button type="submit" id="imgSubmitBtn" class="w-full bg-cyber-accent hover:bg-cyber-accentHover text-cyber-900 font-bold py-3 rounded-xl transition shadow-lg shadow-cyan-500/10">
+                    Extract & Analyze Image
+                </button>
+            </form>
+
+            <!-- Loading Spinner -->
+            <div id="loading" class="hidden mt-8 text-center py-6">
+                <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-cyber-accent border-t-transparent"></div>
+                <p class="text-sm text-gray-400 mt-2">Evaluating features & computing probability vectors...</p>
+            </div>
+
+            <!-- Dynamic Scan Results -->
+            <div id="results" class="mt-8 hidden p-6 rounded-xl border"></div>
+        </div>
+    </main>
+
+    <script src="/static/js/main.js"></script>
+</body>
+</html>
