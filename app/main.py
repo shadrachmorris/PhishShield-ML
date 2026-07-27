@@ -29,7 +29,7 @@ scaler = joblib.load(SCALER_PATH) if os.path.exists(SCALER_PATH) else None
 
 @app.get("/", response_class=HTMLResponse)
 async def home_page(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+    return templates.TemplateResponse(request=request, name="index.html")
 
 
 @app.get("/analytics", response_class=HTMLResponse)
@@ -50,7 +50,7 @@ async def analytics_page(request: Request):
             {"feature": "Suspicious TLD Extension", "importance": "10.8%"},
         ]
     }
-    return templates.TemplateResponse("analytics.html", {"request": request, "metrics": metrics})
+    return templates.TemplateResponse(request=request, name="analytics.html", context={"metrics": metrics})
 
 
 @app.post("/api/v1/scan-url")
