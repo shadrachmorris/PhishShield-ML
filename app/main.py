@@ -7,11 +7,13 @@ from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-# Initialize the FastAPI app instance
+# Initialize FastAPI app instance with docs disabled
 app = FastAPI(
     title="PhishShield ML Platform",
     description="Cyber Threat Detection & Intelligence API",
-    version="1.0.0"
+    version="1.0.0",
+    docs_url=None,
+    redoc_url=None
 )
 
 # Mount static directory and setup templates
@@ -29,12 +31,7 @@ scaler = joblib.load(SCALER_PATH) if os.path.exists(SCALER_PATH) else None
 
 @app.get("/", response_class=HTMLResponse)
 async def home_page(request: Request):
-    return templates.TemplateResponse(request=request, name="index.html")
-
-
-@app.get("/analytics", response_class=HTMLResponse)
-async def analytics_page(request: Request):
-    # Evaluated Model Metrics for Dashboard
+    # Evaluated Model Metrics for Analytics & Threat Metrics tabs
     metrics = {
         "accuracy": "96.4%",
         "precision": "95.8%",
@@ -50,7 +47,7 @@ async def analytics_page(request: Request):
             {"feature": "Suspicious TLD Extension", "importance": "10.8%"},
         ]
     }
-    return templates.TemplateResponse(request=request, name="analytics.html", context={"metrics": metrics})
+    return templates.TemplateResponse(request=request, name="index.html", context={"metrics": metrics})
 
 
 @app.post("/api/v1/scan-url")
@@ -61,7 +58,6 @@ async def scan_url(url: str = Form(...)):
             content={"error": "Model files not loaded properly."}
         )
     
-    # Import scanning functions from app/scanner.py
     from app.scanner import parse_url_features
     
     features = parse_url_features(url)
